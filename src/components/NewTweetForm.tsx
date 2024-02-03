@@ -27,8 +27,7 @@ export function NewTweetForm({ sessionStatus, sessionData }: NewTweetFormProps) 
   if (sessionStatus !== "authenticated") return;
 
   const createTweet = api.tweet.create.useMutation({
-    onSuccess: (newTweet) => {
-      console.log("New tweet created:", newTweet);
+    onSuccess: () => {
       setInputValue("");
     },
   });

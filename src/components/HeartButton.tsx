@@ -1,6 +1,7 @@
 import React from 'react';
 import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import { useSession } from 'next-auth/react';
+import { IconHoverEffect } from '~/components/IconHoverEffect';
 import type { Tweet } from '~/types/tweet';
 
 interface HeartButtonProps {
@@ -27,9 +28,11 @@ export function HeartButton({ likedByMe, likeCount }: HeartButtonProps) {
         likedByMe ? 'text-red-500' : 'text-gray-500 hover:text-red-500 focus-visible:text-red-500'
       }`}
     >
-      <HeartIcon
-        className={`transition-colors duration-200 ${likedByMe ? 'fill-red-500' : 'group-hover:fill-500 fill-gray-500 group-focus-visible:fill-red-500'}`}
-      />
+      <IconHoverEffect red>
+        <HeartIcon
+          className={`transition-colors duration-200 ${likedByMe ? 'fill-red-500' : 'group-hover:fill-red-500 fill-gray-500 group-focus-visible:fill-red-500'}`}
+        />
+      </IconHoverEffect>
       <span>{likeCount}</span>
     </button>
   );

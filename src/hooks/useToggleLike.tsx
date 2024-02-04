@@ -1,6 +1,7 @@
 import { api } from '~/utils/api';
+import { type Tweet } from '~/types/tweet';
 
-export function useToggleLike(id: string) {
+export function useToggleLike(id: string, user: Tweet['user']) {
   const utils = api.useUtils();
 
   const { mutate, isLoading } = api.tweet.toggleLike.useMutation({
@@ -32,6 +33,8 @@ export function useToggleLike(id: string) {
       };
 
       utils.tweet.infiniteFeed.setInfiniteData({}, updateData);
+      utils.tweet.infiniteFeed.setInfiniteData({ onlyFollowing: true }, updateData);
+      utils.tweet.infiniteProfileFeed.setInfiniteData({ userId: user.id }, updateData);
     },
   });
 

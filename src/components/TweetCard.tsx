@@ -7,7 +7,7 @@ import { dateTimeFormatter } from '~/utils/dateTimeFormatter';
 import type { Tweet } from '~/types/tweet';
 
 export function TweetCard({ id, user, content, createdAt, likeCount, likedByMe }: Tweet) {
-  const { toggleLikeMutate, isToggleLikeLoading } = useToggleLike(id);
+  const { toggleLikeMutate, isToggleLikeLoading } = useToggleLike(id, user);
 
   function handleToggleLike() {
     toggleLikeMutate({ id });

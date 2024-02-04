@@ -8,9 +8,15 @@ import { ProfileImage } from '~/components/ProfileImage';
 import { api } from '~/utils/api';
 import { ssgHelper } from '~/server/api/ssgHelper';
 import { getPlural } from '~/utils/getPlural';
+import { InfiniteTweetList } from '~/components/InfiniteTweetList';
+import { FollowButton } from '~/components/FollowButton';
 
 const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ id }) => {
   const { data: profile } = api.profile.getById.useQuery({ id });
+  const tweets = api.tweet.infiniteProfileFeed.useInfiniteQuery(
+    { userId: id },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor },
+  );
 
   if (!profile?.name) return <ErrorPage statusCode={404} />;
 
@@ -29,10 +35,21 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <div className="ml-2 flex-grow">
           <h1 className="text-lg font-bold">{profile.name}</h1>
           <div className="text-gray-500">
-            {profile.tweetsCount} {getPlural(profile.tweetsCount, 'Tweet', 'Tweets')}
+            {profile.tweetsCount} {getPlural(profile.tweetsCount, 'Tweet', 'Tweets')} - {profile.followersCount}{' '}
+            {getPlural(profile.followersCount, 'Follower', 'Followers')} - {profile.followsCount} Following
           </div>
         </div>
+        <FollowButton isFollowing={profile.isFollowing} isLoading={false} userId={id} onClick={() => null} />
       </header>
+      <main>
+        <InfiniteTweetList
+          tweets={tweets.data?.pages.flatMap((page) => page.tweets)}
+          isError={tweets.isError}
+          isLoading={tweets.isLoading}
+          hasMore={tweets.hasNextPage}
+          fetchNewTweets={tweets.fetchNextPage}
+        />
+      </main>
     </>
   );
 };

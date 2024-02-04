@@ -42,14 +42,14 @@ export const profileRouter = createTRPCRouter({
       if (!existingFollow) {
         await ctx.db.user.update({
           where: { id: userId },
-          data: { follows: { connect: { id: currentUserId } } },
+          data: { followers: { connect: { id: currentUserId } } },
         });
 
         addedFollow = true;
       } else {
         await ctx.db.user.update({
           where: { id: userId },
-          data: { follows: { disconnect: { id: currentUserId } } },
+          data: { followers: { disconnect: { id: currentUserId } } },
         });
         addedFollow = false;
       }

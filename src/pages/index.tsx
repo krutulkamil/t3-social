@@ -3,12 +3,13 @@ import { useSession } from 'next-auth/react';
 
 import { NewTweetFormWrapper } from '~/components/NewTweetFormWrapper';
 import { RecentTweets } from '~/components/RecentTweets';
+import { FollowingTweets } from '~/components/FollowingTweets';
 
 const TABS = ['Recent', 'Following'] as const;
+type Tab = (typeof TABS)[number];
 
 export default function Home() {
-  const [selectedTab, setSelectedTab] = useState<(typeof TABS)[number]>('Recent');
-
+  const [selectedTab, setSelectedTab] = useState<Tab>('Recent');
   const session = useSession();
 
   return (
@@ -35,7 +36,7 @@ export default function Home() {
       </header>
 
       <NewTweetFormWrapper />
-      <RecentTweets />
+      {selectedTab === "Recent" ? <RecentTweets /> : <FollowingTweets />}
     </>
   );
 }

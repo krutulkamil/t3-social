@@ -8,5 +8,5 @@ export function NewTweetFormWrapper() {
 
   if (status !== "authenticated") return;
 
-  return <NewTweetForm sessionStatus={status} sessionData={data} />;
+  return <NewTweetForm sessionData={data} />;
 }

@@ -2,16 +2,14 @@ import React, { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent
 import { updateTextAreaSize } from '~/utils/updateTextAreaSize';
 import { ProfileImage } from '~/components/ProfileImage';
 import { Button } from '~/components/Button';
-import { api } from '~/utils/api';
-import type { SessionContextValue } from 'next-auth/react';
+import { useCreateTweet } from '~/hooks/useCreateTweet';
 import type { Session } from 'next-auth';
 
 interface NewTweetFormProps {
-  sessionStatus: SessionContextValue['status'];
   sessionData: Session;
 }
 
-export function NewTweetForm({ sessionStatus, sessionData }: NewTweetFormProps) {
+export function NewTweetForm({ sessionData }: NewTweetFormProps) {
   const [inputValue, setInputValue] = useState('');
   const textAreaRef = useRef<HTMLTextAreaElement | undefined>(undefined);
   const inputRef = useCallback((textArea: HTMLTextAreaElement) => {
@@ -19,45 +17,15 @@ export function NewTweetForm({ sessionStatus, sessionData }: NewTweetFormProps) 
     textAreaRef.current = textArea;
   }, []);
 
-  const trpcUtils = api.useUtils();
-
   useLayoutEffect(() => {
     updateTextAreaSize(textAreaRef.current);
   }, [inputValue]);
 
-  const createTweet = api.tweet.create.useMutation({
-    onSuccess: (newTweet) => {
-      setInputValue('');
+  function onCreateTweetSuccess() {
+    setInputValue('');
+  }
 
-      if (sessionStatus !== 'authenticated') return;
-
-      trpcUtils.tweet.infiniteFeed.setInfiniteData({}, (oldData) => {
-        if (!oldData?.pages[0]) return;
-
-        const newCacheTweet = {
-          ...newTweet,
-          likeCount: 0,
-          likedByMe: false,
-          user: {
-            id: sessionData.user.id,
-            name: sessionData.user.name ?? null,
-            image: sessionData.user.image ?? null,
-          },
-        };
-
-        return {
-          ...oldData,
-          pages: [
-            {
-              ...oldData.pages[0],
-              tweets: [newCacheTweet, ...oldData.pages[0].tweets],
-            },
-            ...oldData.pages.slice(1),
-          ],
-        };
-      });
-    },
-  });
+  const { createTweetMutate } = useCreateTweet(onCreateTweetSuccess);
 
   function handleTextAreaValue(event: ChangeEvent<HTMLTextAreaElement>) {
     return setInputValue(event.target.value);
@@ -65,7 +33,7 @@ export function NewTweetForm({ sessionStatus, sessionData }: NewTweetFormProps) 
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    createTweet.mutate({ content: inputValue });
+    createTweetMutate({ content: inputValue });
   }
 
   return (

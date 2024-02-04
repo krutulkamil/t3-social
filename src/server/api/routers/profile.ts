@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '~/server/api/trpc';
 
 export const profileRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input: { id }, ctx }) => {
@@ -27,4 +27,33 @@ export const profileRouter = createTRPCRouter({
       isFollowing: !!profile.followers.length,
     };
   }),
+
+  toggleFollow: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ input: { userId }, ctx }) => {
+      const currentUserId = ctx.session.user.id;
+
+      const existingFollow = await ctx.db.user.findFirst({
+        where: { id: userId, followers: { some: { id: currentUserId } } },
+      });
+
+      let addedFollow: boolean;
+
+      if (!existingFollow) {
+        await ctx.db.user.update({
+          where: { id: userId },
+          data: { follows: { connect: { id: currentUserId } } },
+        });
+
+        addedFollow = true;
+      } else {
+        await ctx.db.user.update({
+          where: { id: userId },
+          data: { follows: { disconnect: { id: currentUserId } } },
+        });
+        addedFollow = false;
+      }
+
+      return { addedFollow };
+    }),
 });

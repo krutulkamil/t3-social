@@ -1,47 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
-import { api } from '~/utils/api';
 import { ProfileImage } from '~/components/ProfileImage';
 import { HeartButton } from '~/components/HeartButton';
+import { useToggleLike } from '~/hooks/useToggleLike';
 import { dateTimeFormatter } from '~/utils/dateTimeFormatter';
 import type { Tweet } from '~/types/tweet';
 
 export function TweetCard({ id, user, content, createdAt, likeCount, likedByMe }: Tweet) {
-  const trpcUtils = api.useUtils();
-  const toggleLike = api.tweet.toggleLike.useMutation({
-    onSuccess: ({ addedLike }) => {
-      const updateData: Parameters<typeof trpcUtils.tweet.infiniteFeed.setInfiniteData>[1] = (oldData) => {
-        if (!oldData) return;
-
-        const countModifier = addedLike ? 1 : -1;
-
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page) => {
-            return {
-              ...page,
-              tweets: page.tweets.map((tweet) => {
-                if (tweet.id === id) {
-                  return {
-                    ...tweet,
-                    likeCount: tweet.likeCount + countModifier,
-                    likedByMe: addedLike,
-                  };
-                }
-
-                return tweet;
-              }),
-            };
-          }),
-        };
-      };
-
-      trpcUtils.tweet.infiniteFeed.setInfiniteData({}, updateData);
-    },
-  });
+  const { toggleLikeMutate, isToggleLikeLoading } = useToggleLike(id);
 
   function handleToggleLike() {
-    toggleLike.mutate({ id });
+    toggleLikeMutate({ id });
   }
 
   return (
@@ -65,7 +34,7 @@ export function TweetCard({ id, user, content, createdAt, likeCount, likedByMe }
           likeCount={likeCount}
           likedByMe={likedByMe}
           onClick={handleToggleLike}
-          isLoading={toggleLike.isLoading}
+          isLoading={isToggleLikeLoading}
         />
       </div>
     </li>

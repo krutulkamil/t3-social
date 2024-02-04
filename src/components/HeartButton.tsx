@@ -7,9 +7,11 @@ import type { Tweet } from '~/types/tweet';
 interface HeartButtonProps {
   likedByMe: Tweet['likedByMe'];
   likeCount: Tweet['likeCount'];
+  isLoading: boolean;
+  onClick: () => void;
 }
 
-export function HeartButton({ likedByMe, likeCount }: HeartButtonProps) {
+export function HeartButton({ likedByMe, likeCount, isLoading, onClick }: HeartButtonProps) {
   const session = useSession();
   const HeartIcon = likedByMe ? VscHeartFilled : VscHeart;
 
@@ -24,6 +26,8 @@ export function HeartButton({ likedByMe, likeCount }: HeartButtonProps) {
 
   return (
     <button
+      disabled={isLoading}
+      onClick={onClick}
       className={`group -ml-2 flex items-center gap-1 self-start transition-colors duration-200 ${
         likedByMe ? 'text-red-500' : 'text-gray-500 hover:text-red-500 focus-visible:text-red-500'
       }`}

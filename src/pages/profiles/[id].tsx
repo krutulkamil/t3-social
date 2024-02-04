@@ -5,11 +5,12 @@ import type { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType, Ne
 import { VscArrowLeft } from 'react-icons/vsc';
 import { IconHoverEffect } from '~/components/IconHoverEffect';
 import { ProfileImage } from '~/components/ProfileImage';
-import { api } from '~/utils/api';
-import { ssgHelper } from '~/server/api/ssgHelper';
-import { getPlural } from '~/utils/getPlural';
 import { InfiniteTweetList } from '~/components/InfiniteTweetList';
 import { FollowButton } from '~/components/FollowButton';
+import { api } from '~/utils/api';
+import { useToggleFollow } from '~/hooks/useToggleFollow';
+import { ssgHelper } from '~/server/api/ssgHelper';
+import { getPlural } from '~/utils/getPlural';
 
 const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ id }) => {
   const { data: profile } = api.profile.getById.useQuery({ id });
@@ -17,6 +18,8 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
     { userId: id },
     { getNextPageParam: (lastPage) => lastPage.nextCursor },
   );
+
+  const { toggleFollowMutate, isToggleFollowLoading } = useToggleFollow(id);
 
   if (!profile?.name) return <ErrorPage statusCode={404} />;
 
@@ -39,7 +42,12 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             {getPlural(profile.followersCount, 'Follower', 'Followers')} - {profile.followsCount} Following
           </div>
         </div>
-        <FollowButton isFollowing={profile.isFollowing} isLoading={false} userId={id} onClick={() => null} />
+        <FollowButton
+          isFollowing={profile.isFollowing}
+          isLoading={isToggleFollowLoading}
+          userId={id}
+          onClick={() => toggleFollowMutate({ userId: id })}
+        />
       </header>
       <main>
         <InfiniteTweetList

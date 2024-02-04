@@ -1,34 +1,61 @@
-import React, { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from "react";
-import { updateTextAreaSize } from "~/utils/updateTextAreaSize";
-import { ProfileImage } from "~/components/ProfileImage";
-import { Button } from "~/components/Button";
+import React, { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
+import { updateTextAreaSize } from '~/utils/updateTextAreaSize';
+import { ProfileImage } from '~/components/ProfileImage';
+import { Button } from '~/components/Button';
 import { api } from '~/utils/api';
-import type { SessionContextValue } from "next-auth/react";
-import type { Session } from "next-auth";
+import type { SessionContextValue } from 'next-auth/react';
+import type { Session } from 'next-auth';
 
 interface NewTweetFormProps {
-  sessionStatus: SessionContextValue["status"];
+  sessionStatus: SessionContextValue['status'];
   sessionData: Session;
 }
 
 export function NewTweetForm({ sessionStatus, sessionData }: NewTweetFormProps) {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const textAreaRef = useRef<HTMLTextAreaElement | undefined>(undefined);
   const inputRef = useCallback((textArea: HTMLTextAreaElement) => {
-
     updateTextAreaSize(textArea);
     textAreaRef.current = textArea;
   }, []);
+
+  const trpcUtils = api.useUtils();
 
   useLayoutEffect(() => {
     updateTextAreaSize(textAreaRef.current);
   }, [inputValue]);
 
-  if (sessionStatus !== "authenticated") return;
-
   const createTweet = api.tweet.create.useMutation({
-    onSuccess: () => {
-      setInputValue("");
+    onSuccess: (newTweet) => {
+      setInputValue('');
+
+      if (sessionStatus !== 'authenticated') return;
+
+      trpcUtils.tweet.infiniteFeed.setInfiniteData({}, (oldData) => {
+        if (!oldData?.pages[0]) return;
+
+        const newCacheTweet = {
+          ...newTweet,
+          likeCount: 0,
+          likedByMe: false,
+          user: {
+            id: sessionData.user.id,
+            name: sessionData.user.name ?? null,
+            image: sessionData.user.image ?? null,
+          },
+        };
+
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              tweets: [newCacheTweet, ...oldData.pages[0].tweets],
+            },
+            ...oldData.pages.slice(1),
+          ],
+        };
+      });
     },
   });
 

@@ -11,7 +11,7 @@ export function TweetCard({ id, user, content, createdAt, likeCount, likedByMe }
   const toggleLike = api.tweet.toggleLike.useMutation({
     onSuccess: ({ addedLike }) => {
       const updateData: Parameters<typeof trpcUtils.tweet.infiniteFeed.setInfiniteData>[1] = (oldData) => {
-        if (oldData == null) return;
+        if (!oldData) return;
 
         const countModifier = addedLike ? 1 : -1;
 

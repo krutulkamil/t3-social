@@ -6,7 +6,7 @@ type ProfileImageProps = {
   className?: string;
 };
 
-export function ProfileImage({ src, className = "" }: ProfileImageProps) {
+export function ProfileImage({ src, className = "" }: Readonly<ProfileImageProps>) {
   return (
     <div
       className={`relative h-12 w-12 overflow-hidden rounded-full ${className}`}

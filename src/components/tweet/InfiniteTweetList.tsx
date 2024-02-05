@@ -1,7 +1,7 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { TweetCard } from '~/components/TweetCard';
-import { LoadingSpinner } from '~/components/LoadingSpinner';
+import { TweetCard } from '~/components/tweet/TweetCard';
+import { LoadingSpinner } from '~/components/layout/LoadingSpinner';
 import type { Tweet } from '~/types/tweet';
 
 interface InfiniteTweetListProps {
@@ -12,7 +12,13 @@ interface InfiniteTweetListProps {
   fetchNewTweets: () => Promise<unknown>;
 }
 
-export function InfiniteTweetList({ tweets, isError, isLoading, hasMore = false, fetchNewTweets }: InfiniteTweetListProps) {
+export function InfiniteTweetList({
+  tweets,
+  isError,
+  isLoading,
+  hasMore = false,
+  fetchNewTweets,
+}: Readonly<InfiniteTweetListProps>) {
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <h1>Error...</h1>;
   if (!tweets || tweets.length === 0) {

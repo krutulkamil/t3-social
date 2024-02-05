@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-import { NewTweetFormWrapper } from '~/components/NewTweetFormWrapper';
-import { RecentTweets } from '~/components/RecentTweets';
-import { FollowingTweets } from '~/components/FollowingTweets';
+import { NewTweetFormWrapper } from '~/components/tweet/NewTweetFormWrapper';
+import { RecentTweets } from '~/components/tweet/RecentTweets';
+import { FollowingTweets } from '~/components/tweet/FollowingTweets';
 
 const TABS = ['Recent', 'Following'] as const;
 type Tab = (typeof TABS)[number];

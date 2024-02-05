@@ -1,6 +1,6 @@
 import React from "react";
 import { useSession } from "next-auth/react";
-import { NewTweetForm } from "~/components/NewTweetForm";
+import { NewTweetForm } from "~/components/tweet/NewTweetForm";
 
 export function NewTweetFormWrapper() {
   const session = useSession();

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useSession, signOut, signIn } from 'next-auth/react';
 import { VscAccount, VscHome, VscSignIn, VscSignOut } from 'react-icons/vsc';
-import { IconHoverEffect } from '~/components/IconHoverEffect';
+import { IconHoverEffect } from '~/components/layout/IconHoverEffect';
 
 export function SideNav() {
   const session = useSession();

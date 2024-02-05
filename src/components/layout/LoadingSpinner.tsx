@@ -4,7 +4,7 @@ interface LoadingSpinnerProps {
   isLarge?: boolean;
 }
 
-export function LoadingSpinner({ isLarge = false }: LoadingSpinnerProps) {
+export function LoadingSpinner({ isLarge = false }: Readonly<LoadingSpinnerProps>) {
   const sizeClasses = isLarge ? 'w-16 h-16' : 'w-10 h-10';
 
   return (

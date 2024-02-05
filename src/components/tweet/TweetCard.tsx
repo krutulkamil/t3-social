@@ -1,12 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { ProfileImage } from '~/components/ProfileImage';
-import { HeartButton } from '~/components/HeartButton';
+import { ProfileImage } from '~/components/profile/ProfileImage';
+import { HeartButton } from '~/components/tweet/HeartButton';
 import { useToggleLike } from '~/hooks/useToggleLike';
 import { dateTimeFormatter } from '~/utils/dateTimeFormatter';
 import type { Tweet } from '~/types/tweet';
 
-export function TweetCard({ id, user, content, createdAt, likeCount, likedByMe }: Tweet) {
+export function TweetCard({ id, user, content, createdAt, likeCount, likedByMe }: Readonly<Tweet>) {
   const { toggleLikeMutate, isToggleLikeLoading } = useToggleLike(id, user);
 
   function handleToggleLike() {

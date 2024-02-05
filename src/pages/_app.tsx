@@ -3,7 +3,7 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import Head from "next/head";
 
-import { SideNav } from "~/components/SideNav";
+import { SideNav } from "~/components/layout/SideNav";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 

@@ -1,9 +1,9 @@
 import React from 'react';
+import { InfiniteTweetList } from '~/components/tweet/InfiniteTweetList';
 import { api } from '~/utils/api';
-import { InfiniteTweetList } from '~/components/InfiniteTweetList';
 
-export function FollowingTweets() {
-  const tweets = api.tweet.infiniteFeed.useInfiniteQuery({ onlyFollowing: true }, { getNextPageParam: (lastPage) => lastPage.nextCursor });
+export function RecentTweets() {
+  const tweets = api.tweet.infiniteFeed.useInfiniteQuery({}, { getNextPageParam: (lastPage) => lastPage.nextCursor });
   const tweetsData = tweets.data?.pages.flatMap((page) => page.tweets);
 
   return (

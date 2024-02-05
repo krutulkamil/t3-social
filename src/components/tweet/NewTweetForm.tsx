@@ -1,7 +1,7 @@
 import React, { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
 import { updateTextAreaSize } from '~/utils/updateTextAreaSize';
-import { ProfileImage } from '~/components/ProfileImage';
-import { Button } from '~/components/Button';
+import { ProfileImage } from '~/components/profile/ProfileImage';
+import { Button } from '~/components/layout/Button';
 import { useCreateTweet } from '~/hooks/useCreateTweet';
 import type { Session } from 'next-auth';
 
@@ -9,7 +9,7 @@ interface NewTweetFormProps {
   sessionData: Session;
 }
 
-export function NewTweetForm({ sessionData }: NewTweetFormProps) {
+export function NewTweetForm({ sessionData }: Readonly<NewTweetFormProps>) {
   const [inputValue, setInputValue] = useState('');
   const textAreaRef = useRef<HTMLTextAreaElement | undefined>(undefined);
   const inputRef = useCallback((textArea: HTMLTextAreaElement) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import { useSession } from 'next-auth/react';
-import { IconHoverEffect } from '~/components/IconHoverEffect';
+import { IconHoverEffect } from '~/components/layout/IconHoverEffect';
 import type { Tweet } from '~/types/tweet';
 
 interface HeartButtonProps {
@@ -11,7 +11,7 @@ interface HeartButtonProps {
   onClick: () => void;
 }
 
-export function HeartButton({ likedByMe, likeCount, isLoading, onClick }: HeartButtonProps) {
+export function HeartButton({ likedByMe, likeCount, isLoading, onClick }: Readonly<HeartButtonProps>) {
   const session = useSession();
   const HeartIcon = likedByMe ? VscHeartFilled : VscHeart;
 

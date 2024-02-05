@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
-import { Button } from '~/components/Button';
+import { Button } from '~/components/layout/Button';
 
 interface FollowButtonProps {
   userId: string;
@@ -9,7 +9,7 @@ interface FollowButtonProps {
   isLoading: boolean;
 }
 
-export function FollowButton({ userId, onClick, isFollowing, isLoading }: FollowButtonProps) {
+export function FollowButton({ userId, onClick, isFollowing, isLoading }: Readonly<FollowButtonProps>) {
   const session = useSession();
 
   if (session.status !== 'authenticated' || session.data.user.id === userId) {
